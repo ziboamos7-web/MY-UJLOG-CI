@@ -5,7 +5,7 @@ const fwLbl=f=>f?`${I('chk',15)}Abonné(e)`:`${I('plus',15)}Suivre`;
 function rings(cx,cy,n,st,r0){let s='';for(let i=0;i<n;i++){let r=r0+i*st,d='';for(let a=0;a<=64;a++){let t=a/64*6.2832,k=r*(1+.07*Math.sin(3*t+i*.7)+.04*Math.sin(5*t+i)),x=cx+k*Math.cos(t),y=cy+k*.8*Math.sin(t);d+=(a?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)}s+=`<path d="${d}Z"/>`}return s}
 function rects(cx,cy,n,st,r0,k){let s='';for(let i=0;i<n;i++){const w=r0+i*st,h=w*k;s+=`<rect x="${(cx-w).toFixed(1)}" y="${(cy-h).toFixed(1)}" width="${(2*w).toFixed(1)}" height="${(2*h).toFixed(1)}"/>`}return s}
 const BG=(cx=340,cy=40)=>`<svg class="bgc" aria-hidden="true"><g>${rings(cx,cy,9,26,30)}</g></svg>`;
-const nav=a=>{const it=[['nhome','Accueil','a1'],['ncamp','Mon campus','a2'],['nguide','Mon guide','a3'],['nuser','Profil','a4']].map(([i,l,t],k)=>`<button ${k===1||k===2?`data-soon="${l}"`:`data-go="${t}"`}${k==a?' aria-current="page"':''}>${I(i,20)}${l}${k==0&&a!=0?'<span class="dot" style="right:22px;top:6px;min-width:10px;height:10px;padding:0"></span>':''}</button>`);return `<nav class="nav" aria-label="Navigation principale">${it.join('')}</nav>`};
+const nav=a=>{const it=[['nhome','Accueil','a1'],['ncamp','Mon campus','a2'],['nguide','Mon guide','a3'],['nuser','Profil','a4']].map(([i,l,t],k)=>`<button data-go="${t}"${k==a?' aria-current="page"':''}>${I(i,20)}${l}${k==0&&a!=0?'<span class="dot" style="right:22px;top:6px;min-width:10px;height:10px;padding:0"></span>':''}</button>`);return `<nav class="nav" aria-label="Navigation principale">${it.join('')}</nav>`};
 const chips=(l,a=0)=>`<div class="chips" role="group">${l.map((t,k)=>`<button class="chip" aria-pressed="${k==a}">${t}</button>`).join('')}</div>`;
 const vInfo=u=>{u=(u||'').trim();let m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([\w-]{11})/);if(m)return{pl:'yt',id:m[1]};m=u.match(/tiktok\.com\/(?:@[\w.-]+\/)?video\/(\d{8,25})/);if(m)return{pl:'tt',id:m[1]};return null};
 const ytF=(id,pl='yt')=>`<button class="ytf ${pl}" data-pl="${pl}" data-yt="${id}" aria-label="Lire la vidéo" style="${id&&pl=='yt'?`background-image:url(https://i.ytimg.com/vi/${id}/hqdefault.jpg)`:''}"><i></i></button>`;
@@ -108,7 +108,7 @@ const BG2=[['Officiel',[['N','Université','Compte officiel de l’UJLoG','#F973
 const LV={},LD={},BC={},BK={};BG2.forEach(([,a])=>a.forEach(([k,n,d,c,x])=>{LV[k]=n;LD[k]=d;BC[k]=c;if(x)BK[k]=x}));
 let ACC=[{n:'UJLoG',l:'N'}];
 const PS={'UJLoG':[{c:'var(--g)',cap:'[Légende de la story]',t:'Il y a 2 h'},{c:'#B0306A',cap:'[Légende de la story]',t:'Il y a 5 h'}]};const pseen=new Set();
-const pgRow=()=>''; // Profil institutionnel UJLoG masqué temporairement de la rangée des stories.
+const pgRow=()=>ACC.filter(p=>(PS[p.n]||[]).length).map(p=>{const n=eA(p.n);return `<button class="st" data-pgst="${n}" aria-label="Story de ${n}"><span class="rg${pseen.has(p.n)?' seen':''}"><span class="av"><img class="lg" alt="" src="${LOGO}"></span></span><span style="max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n}</span></button>`}).join('');
 let PGS={n:'',from:'a1'};
 const eA=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const SEAL=(()=>{let d='';for(let i=0;i<=120;i++){const t=i/120*Math.PI*2,r=34*(1+.075*Math.cos(t*10));d+=(i?'L':'M')+(r*Math.cos(t)).toFixed(2)+' '+(r*Math.sin(t)).toFixed(2)}return d+'Z'})();
@@ -918,7 +918,7 @@ b=e.target.closest('[data-prm]');if(b){Q13.d.splice(+b.dataset.prm,1);pSet();ret
 if(T('ppub')){const bt=g13('ppub');if(bt.disabled)return;const t=g13('ptx').value.trim(),yv=g13('pyt').value.trim();
 if(yv&&!vInfo(yv)){toast(/vm\.tiktok|tiktok\.com\/t\//.test(yv)?'Lien TikTok court : ouvrez la vidéo et copiez le lien complet (…/video/…)':'Lien non reconnu (YouTube ou TikTok)');return}
 const vi=vInfo(yv),col=Q13.bg>=0,ttl=col?t:(t.split('\n')[0]||'Publication').slice(0,60),h=ig(col?PBG[Q13.bg]:(pimg||'var(--g)'),'Publication',esc(ttl),'','','À l’instant',col?'1/1':pr,0),f=document.querySelector('#a1 .ig');
-if(f)f.insertAdjacentHTML('beforebegin',h);else document.querySelector('#a1 .sc').insertAdjacentHTML('afterbegin',h);
+if(f)f.insertAdjacentHTML('beforebegin',h);else{const an=document.querySelector('#a1 #mcb')||document.querySelector('#a1 .stories');if(an)an.insertAdjacentHTML('afterend',h);else document.querySelector('#a1 .sc').insertAdjacentHTML('afterbegin',h)}
 const a=document.querySelector('#a1 .ig'),me=MB[0].n;a.classList.add('igme');a._tx=t;if(col)a.classList.add('igcl');else if(!pimg&&!vi)a.classList.add('igtx');
 const av=a.querySelector('.ih .av');if(av){if(MB[0].av){av.innerHTML='';av.style.background="url('"+MB[0].av+"') center/cover"}else av.innerHTML=I('usr',22)}
 const vb=a.querySelector('.ih .fl svg.vb');if(vb)vb.remove();const nb=a.querySelector('.ih .fl b');if(nb){nb.textContent=me;nb.dataset.ownh='1'}const fw=a.querySelector('.ih .fwb');if(fw)fw.remove();
