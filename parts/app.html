@@ -1792,7 +1792,7 @@ function showBar(b){hideBar();anc=b;bar=document.createElement('div');bar.classN
 const under=(x,y)=>{const el=document.elementFromPoint(x,y);return el&&el.closest?el.closest('.rxbar button'):null};
 function setLike(b,e){b.setAttribute('aria-pressed',!!e);let i=$('.rxe',b);
  if(e&&e!='❤️'){if(!i){i=document.createElement('i');i.className='rxe';b.insertBefore(i,b.firstChild)}i.textContent=e;b.dataset.rx=e}else{if(i)i.remove();delete b.dataset.rx}
- const a=b.closest('.ig'),lc=a&&$('.lc',a);if(lc)lc.textContent=e?(e=='❤️'?'':e+' ')+'1 J’aime':'Soyez le premier à aimer'}
+ const a=b.closest('.ig'),lc=a&&$('.lc',a);if(lc)lc.textContent=e?(e=='❤️'?'':e+' ')+'1 J’aime':'Soyez le premier à aimer';try{if(window.UJFEED&&UJFEED.like)UJFEED.like(b,e)}catch(_){}}
 function choose(e){const b=anc;hideBar();if(!b)return;
  if(b.matches('[data-sx=cmlk]')){window.UJRXP=e;b.click();return}
  const cur=b.getAttribute('aria-pressed')=='true'?(b.dataset.rx||'❤️'):null;setLike(b,cur==e?null:e)}
@@ -1811,7 +1811,7 @@ function setRp(a,btn,n,on){a.dataset.rp=n;btn.setAttribute('aria-pressed',on);bt
  const cp=$('.cp',a);if(cp){let r=$('.rpn',cp);if(n){if(!r){r=document.createElement('span');r.className='rpn mu';r.style.fontSize='12px';const lc=$('.lc',cp);cp.insertBefore(r,lc?lc.nextSibling:null)}r.textContent=n+(n>1?' republications':' republication')}else if(r)r.remove()}}
 function setDesc(nw,t){$$('.rpb-t,.rpb-add',nw).forEach(x=>x.remove());const e=document.createElement(t?'p':'button');
  if(t){e.className='rpb-t';e.textContent=t}else{e.className='rpb-add';e.textContent='Touchez pour ajouter une description…'}e.dataset.tk='desc';$('.rpb-h',nw).after(e)}
-function unrep(a){if(a._rpb){a._rpb.remove();a._rpb=null}setRp(a,$('.shr2,.sp-sh',a),Math.max(0,(+a.dataset.rp||1)-1),false);const s=$('.tksn');if(s)s.classList.remove('on');say('Republication retirée')}
+function unrep(a){try{if(window.UJFEED&&UJFEED.repost)UJFEED.repost(a,false)}catch(_){}if(a._rpb){a._rpb.remove();a._rpb=null}setRp(a,$('.shr2,.sp-sh',a),Math.max(0,(+a.dataset.rp||1)-1),false);const s=$('.tksn');if(s)s.classList.remove('on');say('Republication retirée')}
 function rep(a){if(!a)return;if(a._rpb&&a._rpb.isConnected){unrep(a);return}
  const sp=a.classList.contains('sp'),g=(s,d='')=>{const e=$(s,a);return e?e.textContent:d},im=$('.sp-m img',a),md=$('.md',a),pp=$('.cp p',a);
  const nm=sp?g('.sp-id b'):g('.ih b'),ti=sp?g('.sp-c b'):g('.mt'),x=sp?g('.sp-t'):(pp?pp.textContent.replace(nm,'').trim():'');
@@ -1819,7 +1819,7 @@ function rep(a){if(!a)return;if(a._rpb&&a._rpb.isConnected){unrep(a);return}
  const h=`<article class="rpb"><div class="rpb-h"><span class="pva2">${typeof I=='function'?I('usr',16):''}</span><div class="fl"><b>Vous</b> a republié<small class="mu">À l’instant</small></div><button data-rpdel>Supprimer</button></div><button class="rpb-add" data-tk="desc">Touchez pour ajouter une description…</button><div class="rpe"><span class="rpm"></span><div><small></small><b></b></div></div></article>`;
  const sc=$('#a1 .sc'),f=sc&&$('.ig',sc);let nw=null;
  if(f){f.insertAdjacentHTML('beforebegin',h);nw=f.previousElementSibling}else if(sc){sc.insertAdjacentHTML('afterbegin',h);nw=sc.firstElementChild}
- if(!nw)return;nw._of=a;a._rpb=nw;$('.rpm',nw).style.background=bg||'var(--g)';$('.rpe small',nw).textContent=nm;$('.rpe b',nw).textContent=ti;
+ if(!nw)return;nw._of=a;a._rpb=nw;try{if(window.UJFEED&&UJFEED.repost)UJFEED.repost(a,true)}catch(_){}$('.rpm',nw).style.background=bg||'var(--g)';$('.rpe small',nw).textContent=nm;$('.rpe b',nw).textContent=ti;
  if(x){const s=document.createElement('span');s.textContent=x.slice(0,90);$('.rpe>div',nw).appendChild(s)}
  setRp(a,$('.shr2,.sp-sh',a),(+a.dataset.rp||0)+1,true);
  let s=$('.tksn');if(!s){s=document.createElement('div');s.className='tksn';s.setAttribute('role','status');document.body.appendChild(s)}
@@ -4617,4 +4617,6 @@ document.addEventListener('DOMContentLoaded',inject);setTimeout(inject,800);
 <script src="parts/js/20-crjs.js" id="crjs"></script>
 <script src="parts/js/21-uj30.js" id="uj30js"></script>
 <script src="parts/js/22-creator-badges.js" id="crbadgesjs"></script>
+<script src="parts/js/23-feed-sync.js" id="feedsyncjs"></script>
+<script src="parts/js/24-messages-sync.js" id="msgsyncjs"></script>
 </body></html>
